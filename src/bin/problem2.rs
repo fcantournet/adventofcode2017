@@ -18,15 +18,33 @@ fn main() {
 588	345	67	286	743	54	802	776	29	44	107	63	303	372	41	810
 128	2088	3422	111	3312	740	3024	1946	920	131	112	477	3386	2392	1108	2741");
 
-    let checksum = checksum(input);
-    println!("{}", checksum)
+    println!("{}", checksum(&input));
+    println!("{}", checksum2(&input));
 }
 
-fn checksum(text: String) -> i32 {
+fn checksum(text: &String) -> i32 {
     let mut total = 0;
     for line in text.lines() {
-        let number: Vec<_> = line.split("\t").map(|s| s.parse::<i32>().unwrap()).collect();
+        let number: Vec<_> = line.split_whitespace().map(|s| s.parse::<i32>().unwrap()).collect();
         total += number.iter().max().unwrap() - number.iter().min().unwrap()
+    }
+    return total
+}
+
+fn checksum2(text: &String) -> i32 {
+    let mut total = 0;
+    for line in text.lines() {
+        let mut number: Vec<_> = line.split_whitespace().map(|s| s.parse::<i32>().unwrap()).collect();
+        number.sort();
+        let quotient = 'outer: loop {
+            let numerator = number.pop().expect("Went through all values without finding 2 that divided evenly");
+            for denominator in number.iter() {
+                if numerator % denominator == 0 {
+                    break 'outer numerator / denominator;
+                }
+            }
+        };
+        total += quotient;
     }
     return total
 }
